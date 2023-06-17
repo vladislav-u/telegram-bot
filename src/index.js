@@ -1,6 +1,8 @@
 const TelegramBot = require('node-telegram-bot-api');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const path = require('path');
+const { createWriteStream } = require('fs');
 const User = require('./models/userModel.js');
 
 dotenv.config();
@@ -23,41 +25,62 @@ bot.setMyCommands([{ command: '/start', description: 'Запуск бота' }])
 bot.onText(/\/start/, (msg) => {
 	const opts = {
 		reply_markup: {
-			resize_keyboard: true,
-			one_time_keyboard: true,
-			keyboard: [['Зареєструватися', 'Увійти'], ['Редагувати']],
+			inline_keyboard: [
+				[{ text: 'Зареєструватися', callback_data: 'register_profile' }],
+				[
+					{ text: 'Переглянути профіль', callback_data: 'check_profile' },
+					{ text: 'Редагувати профіль', callback_data: 'change_profile' },
+				],
+			],
 		},
 	};
 
-	bot.sendMessage(msg.chat.id, 'Hello user', opts);
+	bot.sendMessage(
+		msg.chat.id,
+		`Привіт ${msg.from.first_name}, обери наступну команду!`,
+		opts
+	);
 });
 
-bot.on('message', (msg) => {
-	if (msg.text.toString().toLowerCase().includes('зареєструватися')) {
-		register(msg.from);
-	}
-	if (msg.text.toString().toLowerCase().includes('увійти')) {
-		bot.sendMessage(msg.from.id, 'login');
-	}
-	if (msg.text.toString().toLowerCase().includes('редагувати')) {
-		const opts = {
-			reply_markup: {
-				resize_keyboard: true,
-				one_time_keyboard: true,
-				keyboard: [['Картинка', 'Опис']],
-			},
-		};
+bot.on('callback_query', async (query) => {
+	const chatId = query.message.chat.id;
+	const buttonData = query.data;
 
-		bot.sendMessage(msg.chat.id, 'Виберіть, що ви хочете відредагувати', opts);
+	switch (buttonData) {
+		case 'register_profile':
+			await registerProfile(query.from);
+			break;
+		case 'change_profile':
+			const opts = {
+				reply_markup: {
+					inline_keyboard: [
+						[
+							{ text: 'Картинка', callback_data: 'change_picture' },
+							{ text: 'Опис', callback_data: 'change_description' },
+						],
+					],
+				},
+			};
+
+			bot.sendMessage(chatId, 'Оберіть що ви хочете змітини', opts);
+			break;
+		case 'change_picture':
+			bot.sendMessage(chatId, 'Надішліть картинку');
+			await saveProfilePicture();
+			break;
+		case 'check_profile':
+			const user = await User.findOne({ userId: query.from.id });
+			bot.sendMessage(chatId, `${user}`);
+			break;
 	}
 });
 
-async function register(userData) {
+async function registerProfile(userData) {
 	const { id, first_name, last_name, username } = userData;
 	const exists = await User.findOne({ userId: id });
 
 	if (exists) {
-		bot.sendMessage(id, 'User already registered');
+		bot.sendMessage(id, 'Такий користувач вже існує');
 	} else {
 		const user = new User({
 			userId: id,
@@ -67,7 +90,39 @@ async function register(userData) {
 		});
 
 		await user.save();
-
-		bot.sendMessage(id, 'User successfully registered');
+		bot.sendMessage(id, 'Користувача було зареєстровано');
 	}
+}
+
+async function saveProfilePicture() {
+	bot.on('photo', async (msg) => {
+		const fileStream = await bot.getFileStream(
+			msg.photo[msg.photo.length - 1].file_id
+		);
+		fileStream.pipe(
+			createWriteStream(`.\\src\\public\\profileImages\\${msg.from.id}.jpg`)
+		);
+
+		const pfp = await User.findOneAndUpdate(
+			{ userId: msg.from.id },
+			{
+				profilePicture: path.join(
+					__dirname,
+					`.\\public\\profileImages\\${msg.from.id}.jpg`
+				),
+			},
+			{
+				returnNewDocument: false,
+			}
+		);
+
+		if (pfp) {
+			bot.sendMessage(msg.from.id, 'Картинка профілю змінена успішно');
+		} else {
+			bot.sendMessage(
+				msg.from.id,
+				'Неможливо додати картинку неіснуючому користувачу'
+			);
+		}
+	});
 }
