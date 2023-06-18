@@ -1,16 +1,13 @@
 const TelegramBot = require('node-telegram-bot-api');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-
 const path = require('path');
 const { createWriteStream } = require('fs');
-const User = require('./models/userModel.js');
+const User = require('./models/userModel');
 
-    dotenv.config();
+dotenv.config();
 
-mongoose.connect(
-  'mongodb+srv://vladislavulynets:btangapassword@botdb.xhrcfdf.mongodb.net/'
-);
+mongoose.connect('mongodb+srv://vladislavulynets:btangapassword@botdb.xhrcfdf.mongodb.net/');
 mongoose.connection
   .once('open', () => {
     console.log('Connection to database successfully');
@@ -36,11 +33,7 @@ bot.onText(/\/start/, (msg) => {
     },
   };
 
-  bot.sendMessage(
-    msg.chat.id,
-    `Привіт ${msg.from.first_name}, обери наступну команду!`,
-    opts
-  );
+  bot.sendMessage(msg.chat.id, `Привіт ${msg.from.first_name}, обери наступну команду!`, opts);
 });
 
 bot.on('callback_query', async (query) => {
@@ -84,7 +77,9 @@ bot.on('callback_query', async (query) => {
 });
 
 async function registerProfile(userData) {
-  const { userId, firstName, lastName, userName } = userData;
+  const {
+    userId, firstName, lastName, userName,
+  } = userData;
   const exists = await User.findOne({ userId });
 
   if (exists) {
@@ -104,33 +99,23 @@ async function registerProfile(userData) {
 
 async function saveProfilePicture() {
   bot.on('photo', async (msg) => {
-    const fileStream = await bot.getFileStream(
-      msg.photo[msg.photo.length - 1].file_id
-    );
-    fileStream.pipe(
-      createWriteStream(`.\\src\\public\\profileImages\\${msg.from.id}.jpg`)
-    );
+    const fileStream = await bot.getFileStream(msg.photo[msg.photo.length - 1].file_id);
+    fileStream.pipe(createWriteStream(`.\\src\\public\\profileImages\\${msg.from.id}.jpg`));
 
     const pfp = await User.findOneAndUpdate(
       { userId: msg.from.id },
       {
-        profilePicture: path.join(
-          __dirname,
-          `.\\public\\profileImages\\${msg.from.id}.jpg`
-        ),
+        profilePicture: path.join(__dirname, `.\\public\\profileImages\\${msg.from.id}.jpg`),
       },
       {
         returnNewDocument: false,
-      }
+      },
     );
 
     if (pfp) {
       bot.sendMessage(msg.from.id, 'Картинка профілю змінена успішно');
     } else {
-      bot.sendMessage(
-        msg.from.id,
-        'Неможливо додати картинку неіснуючому користувачу'
-      );
+      bot.sendMessage(msg.from.id, 'Неможливо додати картинку неіснуючому користувачу');
     }
   });
 }
