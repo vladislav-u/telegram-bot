@@ -3,11 +3,7 @@
 	"version": "1.0.0",
 	"description": "Телеграм-бот, за допомогою якого можна знайомитися з людьми, знаходити друзів або другу половинку. Буде можливість створити профіль, завантажити своє фото, вказати коротку інформацію про себе (ім'я, вік, місце проживання, коротку інформацію про себе і т.д.), також відображення людей поблизу.",
 	"main": "index.js",
-	"husky": {
-		"hooks": {
-			"pre-commit": "lint-staged"
-		}
-	},
+
 	"lint-staged": {
 		"*.js": [
 			"npm run lint:fix",
@@ -18,7 +14,8 @@
 		"start": "node ./src/index.js",
 		"dev": "nodemon ./src/index.js",
 		"lint": "eslint .",
-		"lint:fix": "eslint . --fix"
+		"lint:fix": "eslint . --fix",
+		"precommit": "lint-staged"
 	},
 	"author": "",
 	"license": "ISC",
