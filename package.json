@@ -26,8 +26,15 @@
 		"typescript": "^4.8.4"
 	},
 	"husky": {
-		"hooks": {
-			"pre-commit": "CI=true npm run lint:fix"
-		}
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+	},
+	"lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css}": [
+      "prettier --write",
+      "eslint --fix src/",
+      "git add"
+    ]
 	}
 }
