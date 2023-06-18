@@ -6,7 +6,7 @@ const path = require('path');
 const { createWriteStream } = require('fs');
 const User = require('./models/userModel.js');
 
-       dotenv.config();
+        dotenv.config();
 
 mongoose.connect(
   'mongodb+srv://vladislavulynets:btangapassword@botdb.xhrcfdf.mongodb.net/'

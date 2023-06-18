@@ -6,7 +6,8 @@
 
 	"lint-staged": {
 		"*.js": [
-			"npm run lint:fix",
+			"node_modules/.bin/eslint",
+			"prettier --write",
 			"git add"
 		]
 	},
