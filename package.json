@@ -5,7 +5,9 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "node ./src/index.js",
-		"dev": "nodemon ./src/index.js"
+		"dev": "nodemon ./src/index.js",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix"
 	},
 	"author": "",
 	"license": "ISC",
@@ -15,6 +17,23 @@
 		"node-telegram-bot-api": "^0.61.0"
 	},
 	"devDependencies": {
-		"nodemon": "^2.0.22"
+		"eslint": "^8.0.0",
+		"eslint-config-wesbos": "^3.2.3",
+		"husky": "^8.0.3",
+		"lint-staged": "^13.2.2",
+		"nodemon": "^2.0.22",
+		"prettier": "^2.7.1",
+		"typescript": "^4.8.4"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.{js,json,css,md,html}": [
+			"npm run lint:fix",
+			"git add"
+		]
 	}
 }
