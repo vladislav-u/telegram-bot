@@ -27,13 +27,7 @@
 	},
 	"husky": {
 		"hooks": {
-			"pre-commit": "lint-staged"
+			"pre-commit": "CI=true npm run lint:fix"
 		}
-	},
-	"lint-staged": {
-		"*.{js,json,css,md,html}": [
-			"npm run lint:fix",
-			"git add"
-		]
 	}
 }
