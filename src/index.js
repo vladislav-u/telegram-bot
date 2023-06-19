@@ -1,20 +1,11 @@
+require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 const path = require('path');
 const { createWriteStream } = require('fs');
+const connectToDatabase = require('./database');
 const User = require('./models/userModel');
 
-dotenv.config();
-
-mongoose.connect('mongodb+srv://vladislavulynets:btangapassword@botdb.xhrcfdf.mongodb.net/');
-mongoose.connection
-  .once('open', () => {
-    console.log('Connection to database successfully');
-  })
-  .on('error', (error) => {
-    console.log('Connection to database failed', error);
-  });
+connectToDatabase();
 
 const bot = new TelegramBot(process.env.TOKEN, { polling: true });
 
@@ -78,8 +69,12 @@ bot.on('callback_query', async (query) => {
 
 async function registerProfile(userData) {
   const {
-    userId, firstName, lastName, userName,
+    id: userId,
+    username: userName,
+    first_name: firstName,
+    last_name: lastName,
   } = userData;
+
   const exists = await User.findOne({ userId });
 
   if (exists) {
