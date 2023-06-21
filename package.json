@@ -1,0 +1,31 @@
+{
+  "name": "telegram-bot",
+  "version": "1.0.0",
+  "description": "Телеграм-бот, за допомогою якого можна знайомитися з людьми, знаходити друзів або другу половинку. Буде можливість створити профіль, завантажити своє фото, вказати коротку інформацію про себе (ім'я, вік, місце проживання, коротку інформацію про себе і т.д.), також відображення людей поблизу.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "dev": "nodemon ./src/index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --write --config ./.prettierrc.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.1.4",
+    "mongoose": "^7.3.0",
+    "node-telegram-bot-api": "^0.61.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.43.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
+    "nodemon": "^2.0.22",
+    "prettier": "^2.8.8"
+  }
+}
