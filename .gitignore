@@ -1,6 +1,9 @@
 # Public photos
 src/public/
 
+# VSCode debugger
+.vscode/
+
 # Logs
 logs
 *.log
