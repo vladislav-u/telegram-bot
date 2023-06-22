@@ -9,7 +9,7 @@ function startCommand(bot) {
           [{ text: 'Зареєструватися', callback_data: 'registerProfile' }],
           [
             { text: 'Переглянути профіль', callback_data: 'checkProfile' },
-            { text: 'Редагувати профіль', callback_data: 'changeProfile' },
+            { text: 'Редагувати профіль', callback_data: 'editProfile' },
           ],
         ],
       },

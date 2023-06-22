@@ -1,6 +1,8 @@
-const saveProfilePicture = require('./savePictureBtn.controller');
-const registerProfile = require('./registerBtn.controller');
-const User = require('../models/userModel');
+const saveProfilePicture = require('../profileControllers/savePictureBtn.controller');
+const registerProfile = require('../profileControllers/registerBtn.controller');
+const editProfile = require('../profileControllers/editProfileBtn.controller');
+const checkProfile = require('../profileControllers/checkProfileBtn.controller');
+const changeAge = require('../profileControllers/changeAge.controller');
 
 function buttonListener(bot) {
   bot.on('callback_query', async (query) => {
@@ -12,19 +14,8 @@ function buttonListener(bot) {
         await registerProfile(bot, query.from);
         break;
       }
-      case 'changeProfile': {
-        const opts = {
-          reply_markup: {
-            inline_keyboard: [
-              [
-                { text: 'Картинка', callback_data: 'changePicture' },
-                { text: 'Опис', callback_data: 'changeDescription' },
-              ],
-            ],
-          },
-        };
-
-        bot.sendMessage(chatId, 'Оберіть що ви хочете змінити', opts);
+      case 'editProfile': {
+        await editProfile(bot, chatId);
         break;
       }
       case 'changePicture': {
@@ -33,8 +24,11 @@ function buttonListener(bot) {
         break;
       }
       case 'checkProfile': {
-        const user = await User.findOne({ userId: query.from.id });
-        bot.sendMessage(chatId, `${user}`);
+        await checkProfile(bot, chatId);
+        break;
+      }
+      case 'changeAge': {
+        await changeAge(bot, chatId, query.message.chat.message_id);
         break;
       }
       default: {

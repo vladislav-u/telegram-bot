@@ -16,6 +16,9 @@ const userSchema = new mongoose.Schema({
   userName: {
     type: String,
   },
+  age: {
+    type: Number,
+  },
   profilePicture: {
     type: String,
   },
