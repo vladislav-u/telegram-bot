@@ -3,6 +3,8 @@ const registerProfile = require('../profileControllers/registerBtn.controller');
 const editProfile = require('../profileControllers/editProfileBtn.controller');
 const checkProfile = require('../profileControllers/checkProfileBtn.controller');
 const changeAge = require('../profileControllers/changeAge.controller');
+const changeDescription = require('../profileControllers/changeDescription.controller');
+const changePlace = require('../profileControllers/changePlace.controller');
 
 function buttonListener(bot) {
   bot.on('callback_query', async (query) => {
@@ -28,7 +30,15 @@ function buttonListener(bot) {
         break;
       }
       case 'changeAge': {
-        await changeAge(bot, chatId, query.message.chat.message_id);
+        await changeAge(bot, chatId);
+        break;
+      }
+      case 'changeDescription': {
+        await changeDescription(bot, chatId);
+        break;
+      }
+      case 'changePlace': {
+        await changePlace(bot, chatId);
         break;
       }
       default: {
